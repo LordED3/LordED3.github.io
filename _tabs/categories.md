@@ -1,6 +1,6 @@
 ---
 layout: categories
-icon: fas fa-stream
-order: 1
+icon: fas fa-sitemap
+order: 4
 ---
 
