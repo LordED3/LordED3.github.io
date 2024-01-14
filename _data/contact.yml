@@ -3,8 +3,8 @@
 - type: github
   icon: "fab fa-github"
 
-- type: twitter
-  icon: "fa-brands fa-x-twitter"
+ #- type: twitter
+ # icon: "fa-brands fa-x-twitter"
 
 - type: email
   icon: "fas fa-envelope"
@@ -13,6 +13,15 @@
 - type: rss
   icon: "fas fa-rss"
   noblank: true
+
+- type: youtube
+  icon: 'fab fa-youtube'
+  url:  'https://www.youtube.com/channel/UC5kdtxmOyF4SSxdSTkzhv_w'
+
+- type: linkedin
+  icon: 'fab fa-linkedin'   # icons powered by <https://fontawesome.com/>
+  url:  'https://www.linkedin.com/in/divine-ekpe/'  # Fill with your Linkedin homepage
+
 # Uncomment and complete the url below to enable more contact options
 #
 # - type: mastodon
