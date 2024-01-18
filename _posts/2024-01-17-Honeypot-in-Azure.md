@@ -5,7 +5,7 @@ date: 2024-01-17 01:10:00 -0500
 categories: [Blogging, Tutorial, Project]
 tags: [cybersecurity, hacking, blueteam, devops]
 image:
-  path: assets/images/thumbnails/Honeypot.jpg
+  path: assets/images/thumbnails/Honeypot2.jpg
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
 ---
 
@@ -96,6 +96,29 @@ resource "azurerm_network_interface" "HoneyPot_GRP" {
     public_ip_address_id          = azurerm_public_ip.Honeypot_PublicIP.id
 
   }
+}
+
+# Create an NSG (Network Security Group)
+resource "azurerm_network_security_group" "HoneyPot_GRP" {
+  name                = "honeypot-NSG"
+  resource_group_name = azurerm_resource_group.HoneyPot_GRP.name
+  location            = azurerm_resource_group.HoneyPot_GRP.location
+}
+
+# Define security rules for TCP and UDP ports
+resource "azurerm_network_security_rule" "allow_tcp_ports" {
+  name                        = "Allow_TCP"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
+  network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
+
+  source_address_prefix      = "*"  # Allow traffic from any source
+  source_port_range          = "*"  # Allow traffic from any source port
+  destination_address_prefix = "22, 69"  # Allow traffic to any destination
+  destination_port_range     = ["22,69"]  # Specify the TCP ports you want to allow
+  protocol                   = "Tcp"
 }
 
 #Password Variable
