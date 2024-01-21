@@ -31,11 +31,11 @@ To execute this project, the following tools and resources are necessary:
 
 To streamline the creation of Azure resources, Terraform is employed. The deployment process is as follows:
 
-- Confirm Azure CLI login (`az login`).
-- Validate account details (`az account show`).
-- Initialize Terraform (`terraform init`).
-- Preview resource creation (`terraform plan`).
-- Apply the configuration (`terraform apply`).
+- Confirm Azure CLI login :`az login`.
+- Validate account details :`az account show`.
+- Initialize Terraform :`terraform init`.
+- Preview resource creation :`terraform plan`.
+- Apply the configuration :`terraform apply`.
 
 Please Refer to the provided Terraform code below for resource deployment.
 ```tf
@@ -51,11 +51,14 @@ terraform {
 provider "azurerm" {
   features {}
 }
-# Create the Resource group
+
+
+# create the Resource Group
 resource "azurerm_resource_group" "HoneyPot_GRP" {
   name     = "HoneyPot"
   location = " eastus"
 }
+
 # Create VNET
 resource "azurerm_virtual_network" "Pot" {
   name                = "Honeypot_VNET"
@@ -69,13 +72,36 @@ resource "azurerm_public_ip" "HoneyPot_GRP" {
   name                = "Honeypot_PublicIP"
   resource_group_name = azurerm_resource_group.HoneyPot_GRP.name
   location            = azurerm_resource_group.HoneyPot_GRP.location
-  allocation_method   = "dynamic" # Change to "Static" for a static public IP
+  allocation_method   = "Dynamic" # Change to "Static" for a static public IP
+}
+
+# Create an NSG (Network Security Group)
+resource "azurerm_network_security_group" "HoneyPot_GRP_NSG" {
+  name                = "honeypot-NSG"
+  resource_group_name = azurerm_resource_group.HoneyPot_GRP.name
+  location            = azurerm_resource_group.HoneyPot_GRP.location
+}
+
+# Define security rules for TCP and UDP ports
+resource "azurerm_network_security_rule" "allow_tcp_ports" {
+  name                        = "Allow_TCP"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
+  network_security_group_name = azurerm_network_security_group.HoneyPot_GRP_NSG.name
+
+  source_address_prefix      = "*"  # Allow traffic from any source
+  source_port_range          = "*"  # Allow traffic from any source port
+  destination_address_prefix = "22, 69"  # Allow traffic to any destination
+  destination_port_range     = "22, 69"  # Specify the TCP ports you want to allow
+  protocol                   = "Tcp"
 }
 
 #subnet
 resource "azurerm_subnet" "HoneyPot_GRP" {
   name                 = "Honeypot_subnet"
-  virtual_network_name = azurerm_virtual_network.Honeypot_VNET.name
+  virtual_network_name = azurerm_virtual_network.Pot.name
   resource_group_name  = azurerm_resource_group.HoneyPot_GRP.name
   address_prefixes     = ["10.0.0.0/24"]
 
@@ -93,32 +119,9 @@ resource "azurerm_network_interface" "HoneyPot_GRP" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.HoneyPot_GRP.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.Honeypot_PublicIP.id
+    public_ip_address_id          = azurerm_public_ip.HoneyPot_GRP.id
 
   }
-}
-
-# Create an NSG (Network Security Group)
-resource "azurerm_network_security_group" "HoneyPot_GRP" {
-  name                = "honeypot-NSG"
-  resource_group_name = azurerm_resource_group.HoneyPot_GRP.name
-  location            = azurerm_resource_group.HoneyPot_GRP.location
-}
-
-# Define security rules for TCP and UDP ports
-resource "azurerm_network_security_rule" "allow_tcp_ports" {
-  name                        = "Allow_TCP"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
-  network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
-
-  source_address_prefix      = "*"  # Allow traffic from any source
-  source_port_range          = "*"  # Allow traffic from any source port
-  destination_address_prefix = "22, 69"  # Allow traffic to any destination
-  destination_port_range     = ["22,69"]  # Specify the TCP ports you want to allow
-  protocol                   = "Tcp"
 }
 
 #Password Variable
@@ -160,6 +163,7 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
     version   = "latest"
   }
 }
+
 
 ```
 
