@@ -166,13 +166,16 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
 
 
 ```
+![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Terraform Apply.png){: width="900" height="500" }
+> your terrafrom apply should be similar to this
+{: .prompt-info }
 
 ## Step 2: Configuring the Honeypot Server
 
 Once resources are in place, the Honeypot server is configured through the following steps:
 
 0. **Changing SSH Port**
-   - Safeguard existing SSH configuration: `sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config_backup`.
+   - back up the existing SSH configuration: `sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config_backup`.
    - Modify SSH configuration file: `sudo nano /etc/ssh/sshd_config`.
    - Change the SSH port I am changing mine from "Port 22" to "Port 69".
    - Restart SSH daemon: `sudo systemctl restart ssh`.
@@ -180,10 +183,14 @@ Once resources are in place, the Honeypot server is configured through the follo
 1. **Installing Docker and Docker Compose**
    - Update packages: `apt update && apt upgrade -y`.
    - Install Docker and Docker Compose: `sudo apt install docker.io docker-compose -y`.
+   - Add docker to the super users group with: `sudo usermod -aG docker` 
+
+> to avoid typing sudo every time we want to run docker commands
+{: .prompt-tip }
 
 2. **Creating a New User**
    - we will create a user cowrie for security reasons with: `addsuer cowrie` .
-   - Establish a user for running the Cowrie container: `su - honeypot`.
+   - switch to the user to run the Cowrie container: `su - honeypot`.
 
 3. **Pulling Cowrie Image**
    - Retrieve the Cowrie Docker image: `docker pull cowrie/cowrie:latest`.
