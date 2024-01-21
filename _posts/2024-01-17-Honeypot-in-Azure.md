@@ -206,7 +206,7 @@ Once resources are in place, the Honeypot server is configured through the follo
 
 2. **Creating a New User**
    - we will create a user cowrie for security reasons with: `addsuer cowrie` .
-   - switch to the user to run the Cowrie container: `su - honeypot`.
+   - switch to the user to run the Cowrie container: `su - cowrie`.
 
 3. **Pulling Cowrie Image**
    - Retrieve the Cowrie Docker image: `docker pull cowrie/cowrie:latest`.
