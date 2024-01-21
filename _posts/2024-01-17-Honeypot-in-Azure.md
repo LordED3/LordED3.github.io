@@ -205,11 +205,11 @@ Once resources are in place, the Honeypot server is configured through the follo
 {: .prompt-tip }
 
 2. **Creating a New User**
-   - we will create a user cowrie for security reasons with: `addsuer cowrie` .
+   - we will create a user cowrie for security reasons with: `sudo adduser cowrie` .
    - switch to the user to run the Cowrie container: `su - cowrie`.
 
 3. **Pulling Cowrie Image**
-   - Retrieve the Cowrie Docker image: `docker pull cowrie/cowrie:latest`.
+   - Retrieve the Cowrie Docker image: `docker pull cowrie/cowrie:latest`, do this while in "azureuser".
 
 4. **Creating Docker Compose File**
    - Develop a `docker-compose.yml` file with the provided configuration.
