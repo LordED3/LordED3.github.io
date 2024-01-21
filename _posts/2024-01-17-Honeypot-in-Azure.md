@@ -76,27 +76,42 @@ resource "azurerm_public_ip" "HoneyPot_GRP" {
 }
 
 # Create an NSG (Network Security Group)
-resource "azurerm_network_security_group" "HoneyPot_GRP_NSG" {
+resource "azurerm_network_security_group" "honeypot-NSG" {
   name                = "honeypot-NSG"
-  resource_group_name = azurerm_resource_group.HoneyPot_GRP.name
   location            = azurerm_resource_group.HoneyPot_GRP.location
+  resource_group_name = azurerm_resource_group.HoneyPot_GRP.name
 }
 
-# Define security rules for TCP and UDP ports
-resource "azurerm_network_security_rule" "allow_tcp_ports" {
-  name                        = "Allow_TCP"
-  priority                    = 100
+# Security rule for SSH on port 22
+resource "azurerm_network_security_rule" "allow_ssh_port_22" {
+  name                        = "Allow_SSH_22"
+  priority                    = 1000
   direction                   = "Inbound"
   access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
-  network_security_group_name = azurerm_network_security_group.HoneyPot_GRP_NSG.name
-
-  source_address_prefix      = "*"  # Allow traffic from any source
-  source_port_range          = "*"  # Allow traffic from any source port
-  destination_address_prefix = "22, 69"  # Allow traffic to any destination
-  destination_port_range     = "22, 69"  # Specify the TCP ports you want to allow
-  protocol                   = "Tcp"
+  network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
 }
+
+# Security rule for SSH on port 69
+resource "azurerm_network_security_rule" "allow_ssh_port_69" {
+  name                        = "Allow_SSH_69"
+  priority                    = 1001
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "69"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
+  network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
+}
+
 
 #subnet
 resource "azurerm_subnet" "HoneyPot_GRP" {
@@ -165,6 +180,7 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
 }
 
 
+
 ```
 ![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Terraform Apply.png){: width="900" height="500" }
 > your terrafrom apply should be similar to this
@@ -181,11 +197,11 @@ Once resources are in place, the Honeypot server is configured through the follo
    - Restart SSH daemon: `sudo systemctl restart ssh`.
 
 1. **Installing Docker and Docker Compose**
-   - Update packages: `apt update && apt upgrade -y`.
+   - Update packages: `sudo apt update && sudo apt upgrade -y`.
    - Install Docker and Docker Compose: `sudo apt install docker.io docker-compose -y`.
-   - Add docker to the super users group with: `sudo usermod -aG docker` 
+   - Add docker to the super users group with: `sudo usermod -aG docker azureuser` 
 
-> to avoid typing sudo every time we want to run docker commands
+> to avoid typing sudo every time we want to run docker commands azureuser is the username here
 {: .prompt-tip }
 
 2. **Creating a New User**
