@@ -218,12 +218,17 @@ Once resources are in place, the Honeypot server is configured through the follo
 version: '3'
 services:
   cowrie:
-    image: cowrie/cowrie
-    ports:
-      - "2222:22"
-      - "2223:23"
+    image: cowrie/cowrie:latest
+    restart: always
     volumes:
-      - ./cowrie:/cowrie 
+      - configs:/etc/cowrie
+    ports:
+      - "2222:2222"
+      - "23:2223"
+    env_file:
+      - cowrie.env
+volumes:
+    configs:
 ```
 
 5. **Rerouting Traffic with iptables**
