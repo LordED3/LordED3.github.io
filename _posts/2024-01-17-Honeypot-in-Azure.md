@@ -2,7 +2,7 @@
 layout: post
 title: Creating a honeypot in Azure
 date: 2024-01-17 01:10:00 -0500
-categories: [Blogging, Tutorial, Project]
+categories: [Project]
 tags: [cybersecurity, hacking, blueteam, devops]
 image:
   path: assets/images/thumbnails/Honeypot2.jpg
@@ -13,7 +13,7 @@ image:
 
 ## Introduction
 
-This project aims to establish an SSH Honeypot in Azure using Docker, shedding light on the tactics employed by attackers who breach an SSH server. Specifically, we focus on automated brute-force attacks to extract behavioral information for strengthening security defenses.
+This project aims to establish an SSH Honeypot in Azure using Docker, shedding light on the tactics employed by attackers who breach an SSH server. Specifically, we focus on automated brute-force attacks through bots to extract behavioral information for strengthening security defenses.
 
 ### Topology
 ![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Honey Pot Topology croped.jpg){: width="900" height="900" }
@@ -179,11 +179,8 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
   }
 }
 
-
-
 ```
-![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Terraform Apply.png){: width="900" height="500" }
-> your terrafrom apply should be similar to this
+> The Terraorm code here deploys the Honeypot VM and its resource group, it also setup firewall rules for a new ssh port "69"
 {: .prompt-info }
 
 ## Step 2: Configuring the Honeypot Server
@@ -204,39 +201,34 @@ Once resources are in place, the Honeypot server is configured through the follo
 > to avoid typing sudo every time we want to run docker commands azureuser is the username here
 {: .prompt-tip }
 
-2. **Creating a New User**
-   - we will create a user cowrie for security reasons with: `sudo adduser cowrie` .
-   - switch to the user to run the Cowrie container: `su - cowrie`.
 
-3. **Pulling Cowrie Image**
-   - Retrieve the Cowrie Docker image: `docker pull cowrie/cowrie:latest`, do this while in "azureuser".
+2. **Pulling Cowrie Image**
+   - Retrieve the Cowrie Docker image: `docker pull stingar/cowrie:latest`.
 
 4. **Creating Docker Compose File**
-   - Develop a `docker-compose.yml` file with the provided configuration.
+   - I Created a `docker-compose.yml` file with the provided configuration.
 
 ```yaml 
 version: '3'
 services:
   cowrie:
-    image: cowrie/cowrie:latest
+    image: stingar/cowrie:latest
     restart: always
     volumes:
       - configs:/etc/cowrie
     ports:
-      - "2222:2222"
+      - "22:2222"
       - "23:2223"
     env_file:
       - cowrie.env
 volumes:
     configs:
 ```
+   - run `docker-compose up -d` to run the docker compose template
 
-5. **Rerouting Traffic with iptables**
-   - Redirect VM port 22 traffic to Cowrie container ports 2222 and 2223:
-     ``` bash
-     sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
-     sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
-     ```
+[Cowrie Docker Documentation](https://communityhoneynetwork.readthedocs.io/en/stable/cowrie/)
+> you can find cowrie stingar in docker hub 
+{: .prompt-info }
 
 With these steps completed, the Honeypot is ready to attract potential SSH attacks.
 
