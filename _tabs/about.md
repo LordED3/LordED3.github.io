@@ -1,9 +1,12 @@
 ---
+layout: page
 # the default layout is 'page'
 icon:  fas fa-info
 order: 5
 ---
 
+
+<!-- ![Picture](assets/images/Me.jpeg){: w="400" h="400" } -->
 
 # Hi, I'm Divine!
 
