@@ -180,6 +180,7 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
 }
 
 ```
+
 > The Terraorm code here deploys the Honeypot VM and its resource group, it also setup firewall rules for a new ssh port "69"
 {: .prompt-info }
 
