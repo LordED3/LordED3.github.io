@@ -191,7 +191,7 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
 
 ## Step 2: Configuring the Honeypot Server
 
-Once resources are in place, the Honeypot server is configured through the following steps:
+when the VM and Resources are deployed by terraform I will connect by SSH and setup the Honeypot server. It is configured  following these steps below:
 
 - **Updating and Installing Git on Debian**
    - Update repositories: `sudo apt update && sudo apt upgrade -y`.
