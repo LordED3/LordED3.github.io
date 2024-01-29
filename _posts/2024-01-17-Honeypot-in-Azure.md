@@ -1,31 +1,32 @@
 ---
 layout: post
-title: Creating a honeypot in Azure
+title: Deploying a honeypot in Azure
 date: 2024-01-17 01:10:00 -0500
 categories: [Project]
-tags: [cybersecurity, hacking, blueteam, devops]
+tags: [cybersecurity, blueteam, devops]
 image:
   path: assets/images/thumbnails/Honeypot2.jpg
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
 ---
 
-# Creating an SSH Honeypot in the Cloud with Docker
+# Deploying an SSH Honeypot in the Cloud
 
 ## Introduction
 
-This project aims to establish an SSH Honeypot in Azure using Docker, shedding light on the tactics employed by attackers who breach an SSH server. Specifically, we focus on automated brute-force attacks through bots to extract behavioral information for strengthening security defenses.
+This project aims to establish a Honeypot in Azure using Docker, shedding light on the tactics employed by attackers. Specifically, we focus on automated brute-force attacks through bots to extract behavioral information for strengthening security defenses.
 
 ### Topology
-![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Honey Pot Topology croped.jpg){: width="900" height="900" }
+![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Honey Pot Topology - Updated.jpg){: w="900" h="900" }
+_TPOT Container Topology_
 
 ## Tools
 
-To execute this project, the following tools and resources are necessary:
+To execute this project, the following tools and resources are used:
 
 - Desktop/laptop PC
 - Cloud provider account (e.g., Azure)
-- Docker/Docker Compose installed on the virtual machine (VM)
-- Cowrie container
+- Cloud virtual machine (VM)
+- [TPOT by TeleKom Security](https://github.com/telekom-security/tpotce)
 
 ## Step 1: Automating Resource Deployment with Terraform
 
@@ -38,6 +39,7 @@ To streamline the creation of Azure resources, Terraform is employed. The deploy
 - Apply the configuration :`terraform apply`.
 
 Please Refer to the provided Terraform code below for resource deployment.
+
 ```tf
 terraform {
   required_providers {
@@ -85,7 +87,7 @@ resource "azurerm_network_security_group" "honeypot-NSG" {
 # Security rule for SSH on port 22
 resource "azurerm_network_security_rule" "allow_ssh_port_22" {
   name                        = "Allow_SSH_22"
-  priority                    = 1000
+  priority                    = 300
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
@@ -97,20 +99,22 @@ resource "azurerm_network_security_rule" "allow_ssh_port_22" {
   network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
 }
 
-# Security rule for SSH on port 69
-resource "azurerm_network_security_rule" "allow_ssh_port_69" {
-  name                        = "Allow_SSH_69"
-  priority                    = 1001
+# Security rule for different honeypot ports
+/* 
+resource "azurerm_network_security_rule" "open_ports" {
+  name                        = "Honepot_Ports"
+  priority                    = 1000
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "69"
+  destination_port_ranges     = ["0-65535"] # Adjust port ranges as needed
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
   network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
 }
+*/
 
 
 #subnet
@@ -153,7 +157,7 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
   name                            = "The-POT"
   resource_group_name             = azurerm_resource_group.HoneyPot_GRP.name
   location                        = azurerm_resource_group.HoneyPot_GRP.location
-  size                            = "Standard_D2s_v3"
+  size                            = "Standard_D4s_v3"
   admin_username                  = "azureuser"
   admin_password                  = var.admin_password
   disable_password_authentication = false
@@ -168,73 +172,72 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
+    disk_size_gb         = 128
   }
 
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
+    publisher = "debian"
+    offer     = "debian-11"
+    sku       = "11-gen2"
     version   = "latest"
   }
 }
 
 ```
 
-> The Terraorm code here deploys the Honeypot VM and its resource group, it also setup firewall rules for a new ssh port "69"
+> The Terraorm code here deploys the Honeypot VM, Firewall Rules NIC, etc.
 {: .prompt-info }
 
 ## Step 2: Configuring the Honeypot Server
 
 Once resources are in place, the Honeypot server is configured through the following steps:
 
-0. **Changing SSH Port**
-   - back up the existing SSH configuration: `sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config_backup`.
-   - Modify SSH configuration file: `sudo nano /etc/ssh/sshd_config`.
-   - Change the SSH port I am changing mine from "Port 22" to "Port 69".
-   - Restart SSH daemon: `sudo systemctl restart ssh`.
+- **Updating and Installing Git on Debian**
+   - Update repositories: `sudo apt update && sudo apt upgrade -y`.
+   - Install Git: `sudo apt install git`.
 
-1. **Installing Docker and Docker Compose**
-   - Update packages: `sudo apt update && sudo apt upgrade -y`.
-   - Install Docker and Docker Compose: `sudo apt install docker.io docker-compose -y`.
-   - Add docker to the super users group with: `sudo usermod -aG docker azureuser` 
+- **Downloading and Installing TPOT**
+   - Clone the TPOT repository: `git clone https://github.com/telekom-security/tpotce`.
+   - Change directory to tpotce: `cd tpotce/iso/installer/`.
+   - Run the install script: `sudo ./install.sh --type=user`
 
-> to avoid typing sudo every time we want to run docker commands azureuser is the username here
-{: .prompt-tip }
+> There is a prompt to set the web interface username and password during installation and it will take a while to install.
+{: .prompt-warning }
 
+- **Connecting to the Honeypot Web Interface**
+   - Connect to the web interface: `https://VM_Public_IP:64297`.
+  
 
-2. **Pulling Cowrie Image**
-   - Retrieve the Cowrie Docker image: `docker pull stingar/cowrie:latest`.
+- **Important Ports**
+   - The install script will make some changes to the VM to allow management of the honeypot. I have included all the important management ports in the table below.
 
-4. **Creating Docker Compose File**
-   - I Created a `docker-compose.yml` file with the provided configuration.
+| Port        | Protocol | Direction | Description                                                   |
+| :---        | :---     | :---      | :---                                                          |
+| 80, 443     | tcp      | outgoing  | T-Pot Management: Install, Updates, Logs (i.e. Debian, GitHub, DockerHub, PyPi, Sicherheitstacho, etc). |
+| 64294       | tcp      | incoming  | T-Pot Management: Access to Cockpit                           |
+| 64295       | tcp      | incoming  | T-Pot Management: Access to SSH                               |
+| 64297       | tcp      | incoming  | T-Pot Management Access to NGINX reverse proxy                |
 
-```yaml 
-version: '3'
-services:
-  cowrie:
-    image: stingar/cowrie:latest
-    restart: always
-    volumes:
-      - configs:/etc/cowrie
-    ports:
-      - "22:2222"
-      - "23:2223"
-    env_file:
-      - cowrie.env
-volumes:
-    configs:
-```
-   - run `docker-compose up -d` to run the docker compose template
+[This is found in the Readme](https://github.com/telekom-security/tpotce/blob/master/README.md)
 
-[Cowrie Docker Documentation](https://communityhoneynetwork.readthedocs.io/en/stable/cowrie/)
-> you can find cowrie stingar in docker hub 
-{: .prompt-info }
+## Step 3: Analyzing Attacks with the Honeypot Management tools
 
-With these steps completed, the Honeypot is ready to attract potential SSH attacks.
+The TPOT honeypot comes with a set of management tools to analyze atacks, log commands used etc. most off the Management tools use the Username and Password set during installation below is a table of the management tools and thier logins it can be found in the [Readme.](https://github.com/telekom-security/tpotce/blob/master/README.md)
 
-## Step 3: Analyzing Attack Logs
+| Service             | Account Type | Username / Group | Description                                                             |
+| :---                | :---         | :---             | :---                                                                    |
+| SSH, Cockpit        | OS           | `tsec`           | On ISO based installations the user `tsec` is predefined.               |
+| SSH, Cockpit        | OS           | `<os_username>`  | Any other installation, the `<username>` you chose during installation. |
+| Nginx               | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
+| CyberChef           | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
+| Elasticvue          | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
+| Geoip Attack Map    | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
+| Spiderfoot          | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
+| T-Pot               | OS           | `tpot`           | `tpot` this user / group is always reserved by the T-Pot services.      |
+| T-Pot Logs          | OS           | `tpotlogs`       | `tpotlogs` this group is always reserved by the T-Pot services.         |
 
-After the Honeypot has run for a period, logs can be analyzed to gain insights into attacker behavior. Locate logs at `./cowrie/log/tty/cowrie.json` to review attempted commands by potential attackers.
+## **Attack Maps and Behaviour Analysis**
+Leveraging the capabilities of TPOT's advanced management tools, we immerse ourselves in a dynamic understanding of cyber threats. TPOT seamlessly integrates tools that not only empower us to visualize the origins of attacks but also provide a comprehensive overview of IPs, their associated regions, the nature of attacks, and the behaviors exhibited—such as the commands utilized by attackers and their attempted compromises.
 
-By following these steps, this project provides a deeper understanding of SSH attack patterns, contributing to enhanced security measures.
+This rich and insightful data is dynamically translated onto a live map, offering a real-time representation of ongoing attacks. The visual narrative unfolds below through a series of screenshots, encapsulating the essence of these live attack maps. This visual journey provides a vivid portrayal of the ever-evolving cybersecurity landscape, ensuring a proactive stance in the face of emerging threats.
