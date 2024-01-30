@@ -99,7 +99,7 @@ resource "azurerm_network_security_rule" "allow_ssh_port_22" {
   network_security_group_name = azurerm_network_security_group.honeypot-NSG.name
 }
 
-# Security rule for different honeypot ports
+# Security rule to open all ports for TPOT
 /* 
 resource "azurerm_network_security_rule" "open_ports" {
   name                        = "Honepot_Ports"
@@ -108,7 +108,7 @@ resource "azurerm_network_security_rule" "open_ports" {
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_ranges     = ["0-65535"] # Adjust port ranges as needed
+  destination_port_ranges     = ["0-65535"]
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.HoneyPot_GRP.name
@@ -193,6 +193,12 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
 
 when the VM and Resources are deployed by terraform I will connect by SSH and setup the Honeypot server. It is configured  following these steps below:
 
+- **Connecting to the VM by SSH**
+
+This is a screenshot showing how to connect by SSH from the terminal
+![SSH Connection](assets/images/posts/2024-01-17-Honeypot-in-Azure/Connection Vis SSH.png){: w="900" h="900" }
+_SSH Connection_
+
 - **Updating and Installing Git on Debian**
    - Update repositories: `sudo apt update && sudo apt upgrade -y`.
    - Install Git: `sudo apt install git`.
@@ -202,12 +208,20 @@ when the VM and Resources are deployed by terraform I will connect by SSH and se
    - Change directory to tpotce: `cd tpotce/iso/installer/`.
    - Run the install script: `sudo ./install.sh --type=user`
 
-> There is a prompt to set the web interface username and password during installation and it will take a while to install.
+![Install Script](assets/images/posts/2024-01-17-Honeypot-in-Azure/Install Script.gif){: w="900" h="900" }
+_Install script webusername and password set_
+
+> There is a prompt to set the web interface username and password during installation and it will take a while to install this gif is an example of what you will see.
 {: .prompt-warning }
 
 - **Connecting to the Honeypot Web Interface**
    - Connect to the web interface: `https://VM_Public_IP:64297`.
-  
+
+![Landing Page](assets/images/posts/2024-01-17-Honeypot-in-Azure/WebUi_TPOT.png){: w="900" h="900" }
+_TPOT Web interface_
+
+> If you encounter a problem signinng in to the web UI you may have been banned by fail2ban service to fix this by loggin via ssh and checking if fail2ban have any current bans. Check it with `sudo fail2ban-client status` and reset all bans with `sudo fail2ban-client unban --all`
+{: .prompt-tip }
 
 - **Important Ports**
    - The install script will make some changes to the VM to allow management of the honeypot. I have included all the important management ports in the table below.
@@ -228,8 +242,8 @@ The TPOT honeypot comes with a set of management tools to analyze atacks, log co
 | Service             | Account Type | Username / Group | Description                                                             |
 | :---                | :---         | :---             | :---                                                                    |
 | SSH, Cockpit        | OS           | `tsec`           | On ISO based installations the user `tsec` is predefined.               |
-| SSH, Cockpit        | OS           | `<os_username>`  | Any other installation, the `<username>` you chose during installation. |
-| Nginx               | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
+| SSH, Cockpit        | OS           | `<os_username>/<os_password>`  | Any other installation, the `<username>` you chose during installation. |
+| Nginx               | BasicAuth    | ``<os_username>/<os_password>``     | `<web_user>` you chose during the installation of T-Pot.                |
 | CyberChef           | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
 | Elasticvue          | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
 | Geoip Attack Map    | BasicAuth    | `<web_user>`     | `<web_user>` you chose during the installation of T-Pot.                |
@@ -237,7 +251,55 @@ The TPOT honeypot comes with a set of management tools to analyze atacks, log co
 | T-Pot               | OS           | `tpot`           | `tpot` this user / group is always reserved by the T-Pot services.      |
 | T-Pot Logs          | OS           | `tpotlogs`       | `tpotlogs` this group is always reserved by the T-Pot services.         |
 
-## **Attack Maps and Behaviour Analysis**
-Leveraging the capabilities of TPOT's advanced management tools, we immerse ourselves in a dynamic understanding of cyber threats. TPOT seamlessly integrates tools that not only empower us to visualize the origins of attacks but also provide a comprehensive overview of IPs, their associated regions, the nature of attacks, and the behaviors exhibited—such as the commands utilized by attackers and their attempted compromises.
+## **Attacks and Behaviour Analysis**
 
-This rich and insightful data is dynamically translated onto a live map, offering a real-time representation of ongoing attacks. The visual narrative unfolds below through a series of screenshots, encapsulating the essence of these live attack maps. This visual journey provides a vivid portrayal of the ever-evolving cybersecurity landscape, ensuring a proactive stance in the face of emerging threats.
+Leveraging the capabilities of TPOT's advanced management tools, we can dynamically understand cyber threats. TPOT seamlessly integrates tools that not only empower us to visualize the origins of attacks but also provide a comprehensive overview of IPs, IP reputation, their associated regions, the nature of attacks, and the behaviors exhibited—such as the commands utilized by attackers and their attempted compromises.
+
+This rich and insightful data is dynamically translated onto a live map, offering a real-time representation of ongoing attacks. The visual narrative unfolds below through a series of screenshots and videos, captures the essence of these live attack maps. This provides a vivid portrayal of the ever-evolving cybersecurity landscape, ensuring a proactive stance in the face of emerging threats.
+
+
+### **Live Attack Map**
+
+This animated GIF shows a representation of attacks on our honeypot, offering valuable insights into the cybersecurity landscape. The visualization provides information on the attacking IPs, color-coded indications of attack types, and a geographical breakdown by regions and countries. This animated snapshot not only captures the intensity of ongoing attacks but also presents a concise and visually engaging overview of the threat landscape our honeypot is actively monitoring.
+
+![Live Attack](assets/images/posts/2024-01-17-Honeypot-in-Azure/Live Map Attacks.gif){: w="900" h="900" }
+_Live Attack Map_
+
+
+### **Analysis with cyberchef**
+
+This is a screenshot showing the cyberchef web ui utility.
+
+![Cyberchef](assets/images/posts/2024-01-17-Honeypot-in-Azure/Cyberchef.png){: w="900" h="900" }
+_Cyberchef_
+
+### **Analysis with Elasticvue**
+
+This is a screenshot showing the Elasticvue web ui utility, it shows the honeypot containers and its logs.
+
+![Elasticvue](assets/images/posts/2024-01-17-Honeypot-in-Azure/Elasticvue Dashboard.png){: w="900" h="900" }
+_Elasticvue Dashboard_
+
+This is a screenshot showing the Cowrie container and its info in the Elasticve webUi.
+
+![Elasticvue Cowrie](assets/images/posts/2024-01-17-Honeypot-in-Azure/Elasticvue_Cowrie.png){: w="900" h="900" }
+_Elasticvue Cowrie_
+
+This is a screenshot showing the Cowrie container inforomation on attacker IPs and attempted username and passwords in the Elasticve webUi.
+
+![Elasticvue Cowrie_information](assets/images/posts/2024-01-17-Honeypot-in-Azure/Cowrie Info.png){: w="900" h="900" }
+_Elasticvue Cowrie information_
+
+### **IP address and Reputation Analysis with Spiderfoot**
+
+This is a screenshot showing the spiderfoot web ui utility, spiderfoot is an OSINT automation tool.
+
+![Spiderfoot](assets/images/posts/2024-01-17-Honeypot-in-Azure/Spiderfoot IP scan.png){: w="900" h="900" }
+_Spiderfoot Scan_
+
+![Spiderfoot](assets/images/posts/2024-01-17-Honeypot-in-Azure/Spiderfoot IP scan 2.png){: w="900" h="900" }
+_Spiderfoot extended Scan_
+
+### **Conclusion**
+
+In summary, the implementation of this honeypot project, supported by TPOT's advanced management tools, has significantly enhanced our cybersecurity position. Through detailed data visualization, This empowers us with valueable insights, facilitating proactive monitoring and response strategies. As we continuously navigate the changing landscape of cybersecurity, this project reflects my commitment to staying vigilant and responding effectively as the cybersecurity landscape evolves.
