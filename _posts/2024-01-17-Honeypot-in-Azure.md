@@ -287,7 +287,7 @@ This is a screenshot showing the cyberchef web ui utility.
 ![Cyberchef](assets/images/posts/2024-01-17-Honeypot-in-Azure/Cyberchef.png){: w="900" h="900" }
 _Cyberchef_
 
-### **Analysis with Elasticvue and Data visualization Kibana**
+### **Analysis with Elasticvue and Data visualization with Kibana**
 
 Elasticvue and Kibana web ui utility, TPOT uses Elasticvue to provide a user-friendly web interface for managing the Docker cluster and overseeing Honeypot activities and Kibana to show data visualizations which provide insights that aid security professionals in making informed decisions.
 
