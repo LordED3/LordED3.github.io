@@ -9,13 +9,26 @@ image:
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
 ---
 
-# Deploying an SSH Honeypot in the Cloud
+# **Deploying an SSH Honeypot in the Cloud**
 
 ## Introduction
 
-This project aims to establish a Honeypot in Azure using Docker, shedding light on the tactics employed by attackers. Specifically, we focus on automated brute-force attacks through bots to extract behavioral information for strengthening security defenses.
+This project endeavors to implement a Honeypot within the Azure Cloud environment utilizing TPOT, with the primary goal of Shedding light to the tactics employed by potential attackers. The specific focus is on automated brute-force attacks carried out by bots, aiming to extract valuable behavioral information that can subsequently be leveraged to enhance and fortify security defenses.
 
-### Topology
+## Objectives
+
+- Deploy Honeypot in Azure Cloud.
+
+- Attract Bot Automated Brute-Force Attacks Simulation.
+
+- Data Collection and Analysis.
+
+- Behavioral Information Extraction.
+
+
+
+## Topology
+
 ![Desktop View](assets/images/posts/2024-01-17-Honeypot-in-Azure/Honey Pot Topology - Updated.jpg){: w="900" h="900" }
 _TPOT Container Topology_
 
@@ -28,7 +41,7 @@ To execute this project, the following tools and resources are used:
 - Cloud virtual machine (VM)
 - [TPOT by TeleKom Security](https://github.com/telekom-security/tpotce)
 
-## Step 1: Automating Resource Deployment with Terraform
+## Automating Resource Deployment with Terraform
 
 To streamline the creation of Azure resources, Terraform is employed. The deployment process is as follows:
 
@@ -189,13 +202,14 @@ resource "azurerm_linux_virtual_machine" "HoneyPot_GRP" {
 > The Terraorm code here deploys the Honeypot VM, Firewall Rules NIC, etc.
 {: .prompt-info }
 
-## Step 2: Configuring the Honeypot Server
+## Configuring the Honeypot Server
 
 when the VM and Resources are deployed by terraform I will connect by SSH and setup the Honeypot server. It is configured  following these steps below:
 
 - **Connecting to the VM by SSH**
 
 This is a screenshot showing how to connect by SSH from the terminal
+
 ![SSH Connection](assets/images/posts/2024-01-17-Honeypot-in-Azure/Connection Vis SSH.png){: w="900" h="900" }
 _SSH Connection_
 
@@ -235,7 +249,7 @@ _TPOT Web interface_
 
 [This is found in the Readme](https://github.com/telekom-security/tpotce/blob/master/README.md)
 
-## Step 3: Analyzing Attacks with the Honeypot Management tools
+## Analyzing Attacks with the Honeypot Management tools
 
 The TPOT honeypot comes with a set of management tools to analyze atacks, log commands used etc. most off the Management tools use the Username and Password set during installation below is a table of the management tools and thier logins it can be found in the [Readme.](https://github.com/telekom-security/tpotce/blob/master/README.md)
 
@@ -258,7 +272,7 @@ Leveraging the capabilities of TPOT's advanced management tools, we can dynamica
 This rich and insightful data is dynamically translated onto a live map, offering a real-time representation of ongoing attacks. The visual narrative unfolds below through a series of screenshots and videos, captures the essence of these live attack maps. This provides a vivid portrayal of the ever-evolving cybersecurity landscape, ensuring a proactive stance in the face of emerging threats.
 
 
-### **Live Attack Map**
+## **Live Attack Map**
 
 This animated GIF shows a representation of attacks on our honeypot, offering valuable insights into the cybersecurity landscape. The visualization provides information on the attacking IPs, color-coded indications of attack types, and a geographical breakdown by regions and countries. This animated snapshot not only captures the intensity of ongoing attacks but also presents a concise and visually engaging overview of the threat landscape our honeypot is actively monitoring.
 
@@ -266,16 +280,16 @@ This animated GIF shows a representation of attacks on our honeypot, offering va
 _Live Attack Map_
 
 
-### **Analysis with cyberchef**
+## **Analysis with cyberchef**
 
 This is a screenshot showing the cyberchef web ui utility.
 
 ![Cyberchef](assets/images/posts/2024-01-17-Honeypot-in-Azure/Cyberchef.png){: w="900" h="900" }
 _Cyberchef_
 
-### **Analysis with Elasticvue**
+### **Analysis with Elasticvue and Data visualization Kibana**
 
-This is a screenshot showing the Elasticvue web ui utility, it shows the honeypot containers and its logs.
+Elasticvue and Kibana web ui utility, TPOT uses Elasticvue to provide a user-friendly web interface for managing the Docker cluster and overseeing Honeypot activities and Kibana to show data visualizations which provide insights that aid security professionals in making informed decisions.
 
 ![Elasticvue](assets/images/posts/2024-01-17-Honeypot-in-Azure/Elasticvue Dashboard.png){: w="900" h="900" }
 _Elasticvue Dashboard_
