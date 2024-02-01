@@ -251,7 +251,7 @@ _TPOT Web interface_
 
 ## Analyzing Attacks with the Honeypot Management tools
 
-The TPOT honeypot comes with a set of management tools to analyze atacks, log commands used etc. most off the Management tools use the Username and Password set during installation below is a table of the management tools and thier logins it can be found in the [Readme.](https://github.com/telekom-security/tpotce/blob/master/README.md)
+The TPOT honeypot comes with a set of management tools to analyze atacks, log commands used etc. The Management tools use the Username and Password set during installation below is a table of the management tools and logins can be found in the [readme.](https://github.com/telekom-security/tpotce/blob/master/README.md)
 
 | Service             | Account Type | Username / Group | Description                                                             |
 | :---                | :---         | :---             | :---                                                                    |
