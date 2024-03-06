@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Deploying Software with MECM
+title: Cloud MECM Lab Deployment
 date: 2024-02-27 01:10:00 -0500
 categories: [Project]
 tags: [IT]
@@ -9,119 +9,203 @@ image:
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
 ---
 
-# Microsoft Endpoint Configuration Manager
+# Microsoft Endpoint Configuration Manager Deployment in Azure
 
 ## Introduction
 
-This project aims to demonstrate the implementation and utilization of Microsoft Endpoint Configuration Manager (MECM) for centralized management of client devices within an organization. By leveraging MECM, administrators can efficiently deploy software, manage updates, and automate routine tasks, thereby enhancing productivity and security across the network.
+This project is my attempt to automate the deployment and setup of Microsoft Endpoint Configuration Manager (MECM) on azure. MECM is a microsoft application for centralized management of client devices within an organization. Using MECM, administrators can efficiently deploy software, manage updates, and automate routine tasks, to multiple clients.thereby enhancing productivity and security across any organisation.
 
 ## Objectives
 
-1. **Setup Active Directory and Users:**
+1. **Resoure Deployment with Terrafrom to Azure**
+
+2. **Using Powershell to Setup Active Directory and Users**
+
+3. **Using Powershell to Install Prequisites and download files**
    
-2. **Install and Configure Microsoft Endpoint Configuration Manager:**
+4. **Install and Configure Microsoft Endpoint Configuration Manager**
 
-3. **Software Deployment and Patch Management:**
+5. **Demo Software Deployment and Patch Management to Client Computers**
 
-4. **Automating Tasks with PowerShell Scripts:**
 
 ## Tools
-- VMware Workstation Pro
-- 1 Windows Server VM (Active Directory Domain Controller)  --> IP address: 192.168.10.1 /24
-- 1 Windows Server VM (Endpoint Configuration Manager) --> IP address: 192.168.10.2 /24
-- 2 Windows 10 client VMs all on the same virtual network --> IP addresses: 192.168.10.10, 20 /24
-- Network Adapters: NAT and Virtual-Network (VMnet2) on all devices.
+- Azure account
+- 1 Windows Server VM (Active Directory Domain Controller)
+- 1 Windows Server VM (Endpoint Configuration Manager)
+- 1 Windows Server VM (Database)
 
-**Note:** In realistic scenarios, IP addresses will be assigned by a dedicated DHCP server. Static IPs will become tedious with scale.
+## Resoure Deployment with Terrafrom to Azure
 
-## Installing and Configuring Windows AD and Windows Domain Controller
+I have written a Terrafrom script to deploy the following:
 
-I have deployed and configured a Windows Server 2022 with AD DNS and have created a domain named `divinehomelab.ca`. Within the domain, I have also created an organizational unit 'SCCM' with multiple users and groups in the OU. The users and groups that will be created in the OU are listed below:
+- 3 windows 2022 Server
+- 1 Resource Group
+- 1 VNET(Virtual Network)
+- 3 VNIC(Virtual Network Interface Cards)
+- 1 NSG(Network Security Group)
 
-- SCCMAdmin
-- SQLSvrAgent
-- SCCM Network Access 
-- SCCM Client Push Install 
-- SCCM Domain Join 
-- SCCM Admin Group
-- SCCM SQL Reporting
+```tf
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "3.87.0"
+    }
+  }
+}
 
-**Note:** Using multiple Windows servers with different roles instead of one is a good practice for realistic situations.
+provider "azurerm" {
+  features {}
+}
 
-There is also a need to create a container called System Management before the delegation. Some delegation to the SCCM server will also be created.
 
-## Installing Microsoft Endpoint Configuration Manager and Prerequisites on Windows Server
+# Resource Group
+resource "azurerm_resource_group" "MECM_Lab" {
+  name     = "MECM"
+  location = " eastus"
+}
 
-The MECM server will need to be connected to the domain controller, and prerequisites will also need to be installed before installing MECM. The prerequisites are listed below:
+# VNET
+resource "azurerm_virtual_network" "MECM_Lab" {
+  name                = "MCEM_VNET"
+  address_space       = ["10.0.0.0/24"]
+  location            = azurerm_resource_group.MECM_Lab.location
+  resource_group_name = azurerm_resource_group.MECM_Lab.name
+}
 
-- Extend Windows AD schema on the DC
-- SQL Server 2019 (Firewall Rules will be created for inbound management of SQL on the SCCM server)
-- MS SQL Management Studio
-- Windows ADK and Windows PE add-on
-- SCCM 2203
+# Public IP
+resource "azurerm_public_ip" "MCEM_Lab" {
+  name                = "MCEM_Lab_PublicIP"
+  resource_group_name = azurerm_resource_group.MECM_Lab.name
+  location            = azurerm_resource_group.MECM_Lab.location
+  allocation_method   = "Dynamic" # Change to "Static" for a static public IP
+}
 
-**Firewall Inbound Rules on SCCM**
+# Create an NSG (Network Security Group)
+resource "azurerm_network_security_group" "MECM_Lab" {
+  name                = "MECM_NSG"
+  location            = azurerm_resource_group.MECM_Lab.location
+  resource_group_name = azurerm_resource_group.MECM_Lab.name
+}
 
-We are creating inbound rules for SQL Configuration Management on the SCCM server. Follow the steps in the screenshots below.
+resource "azurerm_subnet" "MECM_Lab" {
+  name                 = "internal_subnet"
+  resource_group_name  = azurerm_resource_group.MECM_Lab.name
+  virtual_network_name = azurerm_virtual_network.MECM_Lab.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
 
-**Roles and Features Prerequisites**
+resource "azurerm_network_interface" "MECM_Lab" {
+  count               = 3
+  name                = "VM-nic"
+  location            = azurerm_resource_group.MECM_Lab.location
+  resource_group_name = azurerm_resource_group.MECM_Lab.name
 
-The roles and feature prerequisites needed on the SCCM server are listed below. I have also written a PowerShell script to add the roles and features.
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.MECM_Lab.id
+    private_ip_address_allocation = "Dynamic"
+    # public_ip_address_id          = azurerm_public_ip.MECM.id
+  }
+}
 
-- IIS web server with all management tools, Application Development role, Performance role, Health and Diagnostic roles, Common HTTP features, Windows Server Update Services, .NET Framework 3.5, Remote Differential Compression.
+# Password Variable
+variable "admin_password" {
+  type        = string
+  description = "Admin password for the virtual machine"
+  sensitive   = true
+}
+
+# names for each VM
+variable "vm_names" {
+  type    = list(string)
+  default = ["DC01", "MECM-Site", "Database"]
+}
+
+resource "azurerm_windows_virtual_machine" "MECM_Lab" {
+
+  count               = length(var.vm_names) # it creates VMs according to the number of names in VM_names variable.
+  name                = var.vm_names[count.index]
+  resource_group_name = azurerm_resource_group.MECM_Lab.name
+  location            = azurerm_resource_group.MECM_Lab.location
+  size                = "Standard_F2"
+  admin_username      = "adminuser"
+  admin_password      = var.admin_password
+  network_interface_ids = [
+    azurerm_network_interface.MECM_Lab[count.index].id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2022-Datacenter"
+    version   = "latest"
+  }
+}
+```
+>Using multiple Windows servers with different roles instead of one is a good practice for realistic situations.
+{: .prompt-info }
+
+## Active Directory and Users Setup
+
+I have wrtten a powershell script to install ADDS, DNS on the AD server
+the script will also create a domain `divinehomelab.ca`
 
 ```powershell
-# Install IIS role with all management tools and features
-Add-WindowsFeature -Name Web-Server -IncludeAllSubFeature
+# Install Active Directory and reboot
+Install-WindowsFeature ad-domain-services -IncludeAllSubfeature -IncludeManagementTools
 
-# Install Application Development role
-Add-WindowsFeature -Name Web-App-Dev
+# Wait for reboot to complete
+Start-Sleep -Seconds 180  # Wait for 3 minutes
 
-# Install Performance role
-Add-WindowsFeature -Name Web-Performance
+# Check if the computer was rebooted
+$rebooted = $false
+$maxWait = 300  # Maximum seconds to wait for the system to come back up
+$waitTime = 0
 
-# Install Health and Diagnostic roles
-Add-WindowsFeature -Name Web-Health
+while ($waitTime -lt $maxWait) {
+    if (Test-Connection -ComputerName localhost -Quiet) {
+        $rebooted = $true
+        break
+    }
+    Start-Sleep -Seconds 10
+    $waitTime += 10
+}
 
-# Install Common HTTP features
-Add-WindowsFeature -Name Web-Http-Errors, Web-Http-Logging, Web-Http-Tracing, Web-Default-Doc, Web-Dir-Browsing, Web-Static-Content, Web-Http-Redirect
+if ($rebooted -and (Get-WindowsFeature -Name ad-domain-services).Installed) {
+    # Create domain
+    Install-ADDSForest -DomainName "divinehomelab.ca" -InstallDns
 
-# Install Windows Server Update Services
-Add-WindowsFeature -Name UpdateServices, UpdateServices-WidDB, UpdateServices-Services
+    # Create Organizational Unit
+    New-ADOrganizationalUnit -Name "SCCM" -Path "DC=divinehomelab,DC=ca"
+} else {
+    Write-Host "Reboot or AD DS installation failed."
+}
 
-# Install .NET Framework 3.5
-Add-WindowsFeature -Name NET-Framework-Features
+# download MECM 2303 to extend active directory Schema
+$url = "https://go.microsoft.com/fwlink/p/?LinkID=2195628&clcid=0x409&culture=en-us&country=us"
 
-# Install Windows Remote Differential Compression
-Add-WindowsFeature -Name FS-Remote-Differential-Compression
+$outputFile = "C:\MECM\MCM_Configmgr_2303.exe"  # path where the file is downloaded.
+
+try {
+    Write-Host "Downloading MECM 2303..."
+    Invoke-WebRequest -Uri $url -OutFile $outputFile -ErrorAction Stop
+    Write-Host "MECM 2303 downloaded successfully."
+} catch {
+    Write-Host "Failed to download MECM 2303: $_"
+}
+
 ```
+> This Powershell Script will be run on the VM named `DC01` there will be scripts to setup other servers.
+{: .prompt-info }
 
-After installing the Roles and Features, we need to install:
--**SQL Server 2019 Standard**
-The steps to install it are in the screenshots below.
 
-After the installation is complete, we will use the account (SQLSvrAgent) created in the Domain Controller to configure the SQL Server 2019.
-
-**Note:** Open SQL Server Management Studio and configure the memory to match the server specifications. In my case, I have 4GB RAM and have set it to the maximum server memory.
-
-- MS SQL Server Management Studio
-
-After installing and configuring SQL Server 2019, we will download and install SSMS. The installation process is in the screenshots below.
-
-- Windows ADK
-
-Finally, installing Windows ADK, the PE add-on is also needed to be installed. Both are installed similarly.
-
-- Install and configuration of MECM 2303
-
-Finally, after all the prerequisites have been installed, MECM will be installed and configured. After MECM is configured, we can start software deployment to clients.
-
-## Using Endpoint Configuration Manager for Software Deployment and PowerShell Script Execution
-
-- Demonstrate the process of deploying software applications to client devices using MECM's software deployment feature.
-- Illustrate the steps for creating and deploying PowerShell scripts via MECM to automate routine tasks.
-- Showcase the flexibility and efficiency of MECM in managing diverse IT environments and addressing operational challenges.
 
 ## Conclusion
 
-In conclusion, this project has provided a comprehensive overview of Microsoft Endpoint Configuration Manager and its role in modern IT management. By successfully implementing MECM, organizations can centralize device management, streamline administrative tasks, and enhance overall security posture. Moving forward, continued exploration and utilization of MECM capabilities will enable organizations to adapt to evolving technological landscapes and meet the demands of an increasingly digital world.
+This Project is what I am currently working on I will update it as I continue to work on it Thank you.
