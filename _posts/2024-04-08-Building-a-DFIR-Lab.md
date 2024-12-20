@@ -2,12 +2,14 @@
 layout: post
 title: Building a DFIR Lab
 date: 2024-04-08 01:10:00 -0500
-categories: [Project]
-tags: [IT, Blueteam, Cybersecurity]
+categories: [School Project]
+tags: [Cybersecurity, Computer Forensics]
 image:
   path: assets/images/posts/2024-04-08-Building-a-DFIR-Lab/DFIR thumbnail.png
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
 ---
+## Building a DFIR Lab: A Hands-On Approach to Cybersecurity
+As the world of cybersecurity evolves, so do the tools and environments required for effective digital forensics and incident response (DFIR). The ability to investigate cyber incidents and analyze malicious activity is paramount to defending against today's increasingly sophisticated threats. In this blog post, I'll walk you through the process of building a DFIR lab from scratch, combining both Windows and Linux environments to set up powerful, specialized tools for malware analysis, endpoint detection, and security monitoring.
 
 ## Objectives
 
