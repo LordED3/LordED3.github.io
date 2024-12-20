@@ -13,7 +13,7 @@ image:
 
 ## Introduction
 
-This project endeavors to implement a Honeypot within the Azure Cloud environment utilizing TPOT, with the primary goal of Shedding light to the tactics employed by potential attackers. The specific focus is on automated brute-force attacks carried out by bots, aiming to extract valuable behavioral information that can subsequently be leveraged to enhance and fortify security defenses.
+This project aims to deploy a Honeypot within the Azure Cloud environment using TPOT, with the primary objective of uncovering the tactics employed by potential attackers. The focus is on detecting and analyzing automated brute-force attacks executed by bots, in order to gather valuable behavioral insights that can be used to strengthen and improve security defenses.
 
 ## Objectives
 
