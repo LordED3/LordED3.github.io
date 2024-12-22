@@ -3,7 +3,7 @@ layout: post
 title: Deploying a honeypot in Azure
 date: 2024-01-17 01:10:00 -0500
 categories: [School Project]
-tags: [cybersecurity, Ethical Hacking]
+tags: [Cybersecurity, Ethical Hacking]
 image:
   path: assets/images/thumbnails/Honeypot2.jpg
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
@@ -17,13 +17,13 @@ This project aims to deploy a Honeypot within the Azure Cloud environment using 
 
 ## Objectives
 
-- Deploy Honeypot in Azure Cloud.
+- Deploy Honeypot in Azure.
 
-- Attract Bot Automated Brute-Force Attacks Simulation.
+- Attract Automated Brute-Force Attacks.
 
 - Data Collection and Analysis.
 
-- Behavioral Information Extraction.
+- Extract Behavioral Information.
 
 
 
