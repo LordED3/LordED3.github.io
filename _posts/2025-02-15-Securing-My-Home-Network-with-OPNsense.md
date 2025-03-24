@@ -5,7 +5,7 @@ date: 2025-02-15 01:10:00 -0500
 categories: [Project]
 tags: [Networking, OPNsense]
 image:
-  path: assets/images/thumbnails/Home Network.png
+  path: assets/images/thumbnails/Home Network_updated.jpg
   lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
 ---
 ## Securing My Home Network with OPNsense: A Personal and Technical Journey
@@ -75,7 +75,16 @@ _per-vlan DHCP enabled_
 ![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/vlan_firewall rules.png){: w="600" h="600" }
 _per-vlan firewall rules_
 
-> The firewall rules are cloned and almost the same accross all vlans except management and iot. IoT Vlan is blocked from the internet and Management vlan is allowed to ping all the vlans.
+The table below presents the general configuration of the firewall rules:
+
+| **Action** | **TCP/IP Version** | **Protocol** | **Source**  | **Dest / Invert** | **Destination**   | **Dest Port** | **Description**                                                                 |
+|------------|--------------------|--------------|-------------|-------------------|-------------------|---------------|---------------------------------------------------------------------------------|
+| Pass       | IPv4               | TCP/UDP      | LAN net     | none         | LAN address       | 53            | Allow access to DNS on the LAN interface.                                         |
+| Pass       | IPv4               | Any          | LAN net     | invert           | Private Networks  | Any           | Block access to other internal networks, but allow access to the Internet.       |
+
+
+
+> The firewall rules are mostly identical across all VLANs, with the exception of the Management and IoT VLANs. The IoT VLAN is restricted from internet access, while the Management VLAN is permitted to ping all other VLANs.
 {: .prompt-tip }
 
 ### Switch Configuration.
@@ -184,19 +193,22 @@ line vty 0 4
 !
 
 ```
+
+## 🧪 Testing and Validation
+
 ## 📦 Hardware Planning: Building the Real Setup
 
 With the prototype validated, I have shifted my focus to sourcing hardware for the physical build. I’m currently in the process of purchasing and assembling the necessary components to bring this design to life. Here’s a sneak peek at what’s going into the build:
 
-- Intel N100 Mini PC for OPNsense  
-- Managed TP-Link Switch with VLAN Support 
-- TP-Link Access point with VLAN support 
-- Proxmox Cluster (VLAN aware) for VMs and containers  
-- NAS for Backup & File Storage 
+- Intel N100 [Mini-PC](https://www.toptonpc.com/product/topton-solid-firewall-mini-pc-n100-top-version-4x-2-5g-intel-i226-v-fanless-soft-router-micro-appliance-pfsense-proxmox-aes-ni/) for OPNsense  
+- Managed TP-Link [TL-SG1024DE](https://www.tp-link.com/us/business-networking/easy-smart-switch/tl-sg1024de/) Switch with VLAN Support 
+- TP-Link [EAP650](https://www.omadanetworks.com/ca/business-networking/omada-wifi-ceiling-mount/eap650/) with VLAN support 
+- Proxmox Cluster (VLAN aware) for VMs, containers and High Availability 
+- [NAS](https://www.gmktec.com/products/intel-twin-lake-n150-dual-system-4-bay-nas-mini-pc-nucbox-g9) for Backup & File Storage 
 
 The physical layout includes an 18u open-frame rack with a 24 port keystone patch panel, switch, NAS, Proxmox cluster, and the OPNsense firewall neatly wired to ensure easy access and maintenance.
 
-![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/Rack.png){: w="600" h="600" }
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/Rack_Diagram.drawio.png){: w="600" h="600" }
 _Physical Rack Diagram for future ref_
 
 ## 📈 Performance Results and Future Plans
@@ -226,6 +238,6 @@ This journey wouldn’t have been possible without the wealth of resources I lea
 
 ## 🔗 Final Thoughts: Why OPNsense is a Game-Changer
 
-Building and securing my home network with OPNsense has been a deeply rewarding experience. It’s not just about protecting my network—it’s about gaining a deeper understanding of enterprise-grade firewall technologies and applying that knowledge in a real-world environment. OPNsense has empowered me with the tools and flexibility I need to create a secure, high-performance network that I can fully control.
+Building and securing my home network with OPNsense has been a deeply rewarding experience. It’s not just about protecting my network, it’s about gaining a deeper understanding of enterprise-grade firewall technologies and applying that knowledge in a real-world environment. OPNsense has empowered me with the tools and flexibility I need to create a secure, high-performance network that I can fully control.
 
 As I move forward with the physical build, I’m excited to take this project to the next level and continue fine-tuning my home network for maximum security and performance. If you’re looking to level up your home network game, OPNsense is definitely worth considering!
