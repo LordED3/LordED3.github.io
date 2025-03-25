@@ -194,7 +194,35 @@ line vty 0 4
 
 ```
 
-## 🧪 Testing and Validation
+## 🧪 Testing & Validation
+Once the prototype was ready in EVE-NG, I moved on to testing to ensure that the network design met my security and performance goals. My primary focus was on validating VLAN isolation, firewall rules.
+
+> Click on the image to zoom in.
+{: .prompt-info }
+
+### ✅ VLAN Isolation and Segmentation
+To ensure that each VLAN was properly isolated and followed the intended firewall rules, I conducted several ping and traceroute tests between devices across VLANs.
+
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/MGT.png){: w="200" h="300" }
+_MGT VLAN Ping & DHCP Test_
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/Guest.png){: w="200" h="300" }
+_Guest VLAN Ping & DHCP Test_
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/DMZ.png){: w="200" h="300" }
+_DMZ VLAN Ping & DHCP Test_
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/IoT.png){: w="200" h="300" }
+_IoT VLAN Ping & DHCP Test_
+
+### 🔥 Firewall Rule Validation
+All firewall rules behaved as expected, preventing unauthorized access and blocking potentially unsafe traffic.
+
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/Firewall Logs.png){: w="200" h="300" }
+_Fire wall logs_
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/Services OPNsense.png){: w="200" h="300" }
+_Enabled Services_
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/DHCP.png){: w="200" h="300" }
+_Active DHCP leases_
+![Desktop View](assets/images/posts/2025-02-15-OPNsense-Home-Network/Int_stat.png){: w="200" h="300" }
+_Interface Stats_
 
 ## 📦 Hardware Planning: Building the Real Setup
 
