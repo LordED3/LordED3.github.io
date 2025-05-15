@@ -13,8 +13,9 @@ image:
 
 ## Overview
 
-This project builds a simulated multi-branch enterprise network using Juniper vSRX routers and firewalls. A central HQ connects to two remote branches (Branch A and Branch B) via point-to-point links, with the HQ providing centralized internet access through NAT. Dynamic routing is achieved using OSPF to ensure seamless communication across all sites.
-The lab focuses on key enterprise networking concepts, including dynamic routing, NAT/PAT and inter-VLAN routing.
+This project simulates a multi-branch enterprise network using Juniper vSRX routers and firewalls. The topology includes a central HQ connected to two remote branches (Branch A and Branch B) via point-to-point links, with the HQ serving as the centralized gateway for internet access through NAT. Dynamic routing is configured using OSPF to enable seamless communication across all sites.
+
+I approached this lab as an experiment to see whether multiple branches and vlans could be successfully NATed through a single WAN interface on the SRX platform. Beyond getting it to work, my goal was to deepen my understanding of how JunOS manages security zones, routing instances, and NAT policies in a multi-tenant or segmented network design.
 
 ## Project Objectives
 
@@ -132,4 +133,4 @@ The video below showcases:
 All the final configuration files for each device are available [Config Files.](https://github.com/LordED3/OSPF-NAT-Juniper-configs./tree/main)
 
 ## Conclusion
-This project demonstrates essential enterprise networking practices using Juniper vSRX devices. The successful deployment of OSPF, NAT, and VLANs ensures robust connectivity across branches and lays the groundwork for exploring more advanced topics like BGP, stricter firewall policies, and DMZ deployment.
+This project was an experiment to see if multiple VLANs could be successfully NATed through a single WAN interface on a Juniper SRX device. It was a great learning experience that challenged me to think through interface routing, security zones, and policy configurations. I'm glad to say it worked as intended, and the process helped solidify my understanding of NAT in multi-branch environments. What I’ve learned here will definitely influence how I approach similar setups in future projects, both in the lab and in real-world scenarios.
