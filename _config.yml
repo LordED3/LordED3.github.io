@@ -14,7 +14,7 @@ timezone: America/Toronto
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Divine .C. Ekpe # the main title
+title: Divine .C.E # the main title
 
 tagline: Computer Enthusiast | Network Engineer | Programmer # it will display as the sub-title
 
@@ -73,7 +73,7 @@ theme_mode: # [light|dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar: assets/images/Me.jpeg
+avatar: assets/images/Avatar.jpg
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
 social_preview_image: # string, local or CORS resources

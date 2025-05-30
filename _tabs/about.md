@@ -12,39 +12,39 @@ order: 5
 
 ## 📂 About Me: 
 
- I am an Enthusiastic and dedicated person pursuing a degree in Computer Systems Technology - Networking at Centennial College, Ontario. Committed to continuous improvement, I consistently strive to learn and adapt to emerging technologies. Eager to capitalize on my skills and knowledge by actively seeking opportunities that will allow me to contribute to and thrive in the dynamic field of technology. 
+I’m a computer enthusiast who thrives on hands-on projects, tackling challenges, and constantly improving my skills. I enjoy digging into real-world problems and learning through experimentation. Whether I’m setting up complex environments, breaking things to understand them better, or refining my workflow, I’m always in pursuit of practical knowledge that makes a difference.
 
-## Skills:
+## 🛠 Skills & Interests
 
-| **TECHNICAL SKILLS**                     | |
-| ---------------------------------------- | ---------------------------------------- |
-| - Good Experience with Python, Linux bash scripting & PowerShell scripting | - Experience in designing and implementing small to medium-sized networks. |
-| - Proficient in configuring and troubleshooting Cisco networking devices. | - Great Experience with Virtualization VMware ESXi (vSphere), Proxmox. |
-| - Great Experience with Linux operating system and command line interface. | - Good Experience with Cloud Platforms but mostly Microsoft Azure. |
-| - Good Knowledge of network protocols and technologies, including TCP/IP, DNS, DHCP, VLANs, OSI model, and VPNs. | - Strong analytical and problem-solving abilities in resolving issues. |
-| - Good Experience with Ansible, Terraform, and willingness to learn other automation technologies and tools. | - Good experience with SIEM and XDR tools like Wazuh, Microsoft Sentinel. |
-|                                        | - Good experience with Ticketing Systems like Zendesk. |
+- **Networking**: from basic configurations to advanced lab setups
 
+- **Virtualization**: passionate about platforms like Proxmox and exploring how to maximize performance and flexibility
+
+- **EVE-NG / GNS3**: I love labbing and simulating networks for learning and testing
+
+- **Windows Server / Linux**: including setup, management, and deployment in lab environments
+
+- **Home Labs & Infrastructure Projects**: self-hosting, sandboxing, and experimenting in controlled setups
+
+- **Custom PCs/Servers**: building, upgrading, and repurposing desktops, old workstations, and mini-PCs into home servers, clusters, or budget-friendly gaming rigs
+
+- **Continuous Learning**: always diving into new tech, tools, and techniques
 
 
 ## 👨🏽‍🎓 Education:
 
-- **Ontario College Advanced Diploma:**
-  - Computer Systems Technology - Networking, Centennial College, Scarborough, ON (Expected 06/2024)
+- **Associates / Ontario College Advanced Diploma:**
+  - Computer Systems Technology - Networking, Centennial College
 
 - **Ontario College Certificate:**
-  - Computer Repair and Maintenance, Centennial College, Scarborough, ON (06/2022)
-
-- **High School Diploma:**
-  - Stella Maris, Abuja, Nigeria (07/2017)
+  - Computer Repair and Maintenance, Centennial College
 
 
 ## 🧾 Certificates / Certifications:
 
-- Microsoft Office 365: Administration (LinkedIn Learning)
-- Linux Commands and Shell Scripting (IBM edx)
-- Computer Repair and Maintenance (Centennial College)
-- PowerShell: Automating IT Administration (LinkedIn Learning)
+- Juniper	JNCIA-Junos 
+- Google IT Support Professional Certificate 
+- Cisco CCNA
 
 
 
