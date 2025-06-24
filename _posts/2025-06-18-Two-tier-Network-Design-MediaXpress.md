@@ -122,14 +122,14 @@ I have implemented the network using EVE-NG (Emulated Virtual Environment Next G
 
 
 I have linked the configuration files for each device below.
-- HQ-FW-A 
-- HQ-CSW-A
-- HQ-CSW-B
-- AC-SW-1
-- AC-SW-2
-- AC-SW-3
-- AC-SW-4
-- ISC DHCP
+- [HQ-FW-A](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/config-HQ-FW-R.mediaxpress.local-20250618000220.xml)
+- [HQ-CSW-A](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/HQ-Core%20Switch%20A.txt)
+- [HQ-CSW-B](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/HQ-Core%20Switch%20B.txt)
+- [AC-SW-1](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/HQ-Access%20Switch%201.txt)
+- [AC-SW-2](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/HQ-Access%20Switch%202.txt)
+- [AC-SW-3](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/HQ-Access%20Switch%203.txt)
+- [AC-SW-4](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/HQ-Access%20Switch%204.txt)
+- [ISC-DHCP](https://github.com/LordED3/MediaXpress-Network-Design/blob/main/ISC%20dhcp.txt)
 
 ## Why the OPNsense Firewall Is Critical
 The OPNsense firewall is the point of contact for all incoming and outgoing traffic. It plays a dual role as both the network’s edge router and primary security device.
