@@ -207,6 +207,10 @@ A Windows Server 2022 instance has been configured as the Active Directory Domai
 -	DNS services for internal name resolution
 -	Support for future features like certificate services, file shares and SCCM
 
+![Desktop View](assets/images/posts/2025-06-01-Two-tier-Network-Design-MediaXpress/Domain Contoller.png){: w="900" h="900" }
+_MediaXpress Domain Controller_
+
+
 Active Directory plays a vital role in enforcing identity-based security and ensuring that only authorized users and devices can access network resources.
 These additional systems complement the network’s two-tier design and robust security model, creating a well-rounded infrastructure that is easy to manage, secure, and ready for scaling as MediaXpress grows.
 
