@@ -228,9 +228,7 @@ Once all devices were configured, I carried out comprehensive testing to validat
 ### **Demo Video**
 A demo video is linked below, showcasing the entire project in action, including the network topology, configuration highlights, and validation tests. This demo provides a visual walkthrough of the setup and how each component interacts within the design.
 
-> Note: This is a place holder for now it will be updated soon, thank you.
-{: .prompt-info }
-{% include embed/youtube.html id='brzFmtPtWwo?si=rIf4shtSzdd-I2hZ' %}
+{% include embed/youtube.html id='llzd1VjAfNE?si=TjvaJzTvR9LpL9CX' %}
 
 ## Conclusion
 This project successfully establishes the foundation of a robust two-tier network design for MediaXpress’s headquarters. The network delivers:
