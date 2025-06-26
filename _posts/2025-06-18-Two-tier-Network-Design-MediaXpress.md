@@ -67,6 +67,9 @@ The topology below illustrates how the core, access, and edge layers are interco
 ![Desktop View](assets/images/posts/2025-06-01-Two-tier-Network-Design-MediaXpress/Media Company Low level overview - HQ.png){: w="900" h="900" }
 _Network Topology_
 
+![Desktop View](assets/images/posts/2025-06-01-Two-tier-Network-Design-MediaXpress/Network_Diagram_Eve-ng.png){: w="900" h="900" }
+_Network Topology EVE_NG_
+
 ## IP Addressing table
 This table defines the IP address assignments for each device, VLAN, and subnet in the network, ensuring proper communication, segmentation, and security.
 
